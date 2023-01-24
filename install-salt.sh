@@ -4,6 +4,7 @@ SUPPORTED_OS="rhel|fedora|centos"
 FILE_NAME="$( realpath $0 | awk -F'/' '{print $NF}')"
 LOG_FILE="$( echo /tmp/${FILE_NAME} | sed 's/\.sh//g')-$(date +%d%m%Y%H%M%S)-error.log"
 SALT_VERSION="3004"
+MASTERS=("192.168.0.221" "192.168.0.222")
 
 check_retcode() {
   
@@ -32,8 +33,9 @@ check_retcode() {
 01_configure_salt_repository() {
   
   echo -ne " - configuring Salt repository...\r"
-  bash -c "set -e ; rpm --import https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub ;
-           curl -s https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}.repo -o /etc/yum.repos.d/salt.repo" 2>> ${LOG_FILE}
+  bash -c "set -e ; rpm --import https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub;
+           curl -s https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}.repo \
+                -o /etc/yum.repos.d/salt.repo" 2>> ${LOG_FILE}
   check_retcode $? " - configuring Salt repository..."
 
 }
@@ -64,9 +66,21 @@ check_retcode() {
 
 }
 
-05_configure_service() {
-    #
-    echo ""
+05_configure_salt_minion() {
+    
+    echo -ne " - configuring Salt Minion...\r"
+    (
+      set -e ; 
+      echo \"startup_states: 'highstate'\" > /etc/salt/minion.d/startup_states.conf;
+      echo $(hostname) > /etc/salt/minion_id;
+      echo "masters:" > /etc/salt/minion.d/master.conf
+      for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
+        echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/minion.d/master.conf
+      }
+    )
+    systemctl start salt-minion 
+    check_retcode $? " - configuring Salt Minion..."
+    
 }
 
 
@@ -75,9 +89,10 @@ case $1 in
   --minion)
     SALT_CONTEXT="salt-minion"
     INSTALL_PACKAGES="salt-minion"
-    00_check_os_support
-    01_configure_salt_repository
-    02_install_packages
+    #00_check_os_support
+    #01_configure_salt_repository
+    #02_install_packages
+    05_configure_salt_minion
     ;;
   --master)
     SALT_CONTEXT="salt-master"
