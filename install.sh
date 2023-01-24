@@ -33,9 +33,12 @@ check_retcode() {
 01_configure_salt_repository() {
   
   echo -ne " - configuring Salt repository...\r"
-  bash -c "set -e ; rpm --import https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub;
-           curl -s https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}.repo \
-                -o /etc/yum.repos.d/salt.repo" 2>> ${LOG_FILE}
+  (
+    set -e
+    rpm --import https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}/SALTSTACK-GPG-KEY.pub
+    curl -s https://repo.saltproject.io/py3/redhat/8/x86_64/${SALT_VERSION}.repo \
+         -o /etc/yum.repos.d/salt.repo 2>> ${LOG_FILE}
+  )
   check_retcode $? " - configuring Salt repository..."
 
 }
@@ -43,7 +46,10 @@ check_retcode() {
 02_install_packages() {
 
   echo -ne " - installing ${SALT_CONTEXT} packages...\r"
-  bash -c "set -e ; yum install -y -q ${INSTALL_PACKAGES}" >> ${LOG_FILE} 2>> ${LOG_FILE}
+  (
+    set -e
+    yum install -y -q ${INSTALL_PACKAGES} >> ${LOG_FILE} 2>> ${LOG_FILE}
+  )
   check_retcode $? " - installing ${SALT_CONTEXT} packages..."
 
 }
@@ -51,7 +57,10 @@ check_retcode() {
 03_remove_salt_packages() {
 
   echo -ne " - removing Salt packages...\r"
-  bash -c "set -e ; yum remove -y -q salt-*" >> ${LOG_FILE} 2>> ${LOG_FILE}
+  (
+    set -e
+    yum remove -y -q salt-* >> ${LOG_FILE} 2>> ${LOG_FILE}
+  )
   check_retcode $? " - removing Salt packages..."
 
 }
@@ -71,14 +80,15 @@ check_retcode() {
     echo -ne " - configuring Salt Minion...\r"
     (
       set -e ; 
-      echo "startup_states: 'highstate'" > /etc/salt/minion.d/startup_states.conf;
-      echo $(hostname) > /etc/salt/minion_id;
+      echo "startup_states: 'highstate'" > /etc/salt/minion.d/startup_states.conf
+      echo $(hostname) > /etc/salt/minion_id
       echo "master:" > /etc/salt/minion.d/master.conf
       for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
         echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/minion.d/master.conf
       }
+      systemctl restart salt-minion 
     )
-    systemctl restart salt-minion 
+    
     check_retcode $? " - configuring Salt Minion..."
 
 }
