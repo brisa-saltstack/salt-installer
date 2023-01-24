@@ -78,7 +78,7 @@ check_retcode() {
         echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/minion.d/master.conf
       }
     )
-    systemctl start salt-minion 
+    systemctl restart salt-minion 
     check_retcode $? " - configuring Salt Minion..."
 
 }
