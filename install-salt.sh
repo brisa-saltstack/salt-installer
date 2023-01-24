@@ -80,7 +80,7 @@ check_retcode() {
     )
     systemctl start salt-minion 
     check_retcode $? " - configuring Salt Minion..."
-    
+
 }
 
 
@@ -89,9 +89,9 @@ case $1 in
   --minion)
     SALT_CONTEXT="salt-minion"
     INSTALL_PACKAGES="salt-minion"
-    #00_check_os_support
-    #01_configure_salt_repository
-    #02_install_packages
+    00_check_os_support
+    01_configure_salt_repository
+    02_install_packages
     05_configure_salt_minion
     ;;
   --master)
