@@ -93,8 +93,6 @@ check_retcode() {
 
 }
 
-
-
 case $1 in
   --minion)
     SALT_CONTEXT="salt-minion"
