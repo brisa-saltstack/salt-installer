@@ -71,7 +71,7 @@ check_retcode() {
     echo -ne " - configuring Salt Minion...\r"
     (
       set -e ; 
-      echo \"startup_states: 'highstate'\" > /etc/salt/minion.d/startup_states.conf;
+      echo "startup_states: 'highstate'" > /etc/salt/minion.d/startup_states.conf;
       echo $(hostname) > /etc/salt/minion_id;
       echo "masters:" > /etc/salt/minion.d/master.conf
       for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
