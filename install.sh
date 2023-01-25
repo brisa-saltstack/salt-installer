@@ -96,7 +96,13 @@ check_retcode() {
 06_configure_syndic_grain() {
 
   echo -ne " - configuring Salt Syndic...\r"
-  echo -ne "grains:\n  is_syndic: True" > /etc/salt/minion.d/grains.conf   
+  ( 
+    echo -ne "grains:\n  is_syndic: True" > /etc/salt/minion.d/grains.conf;
+    echo "syndic_master: "
+    for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
+      echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/master.d/syndic.conf
+    }
+  )
   check_retcode $? " - configuring Salt Syndic..."
 
 }
@@ -121,8 +127,8 @@ case $1 in
     03_remove_salt_packages
     ;;
   --syndic)
-    SALT_CONTEXT="salt-minion"
-    INSTALL_PACKAGES="salt-minion"
+    SALT_CONTEXT="salt-master"
+    INSTALL_PACKAGES="salt-master salt-minion salt-ssh salt-syndic salt-cloud salt-api"
     00_check_os_support
     01_configure_salt_repository
     02_install_packages
