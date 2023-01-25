@@ -98,7 +98,7 @@ check_retcode() {
   echo -ne " - configuring Salt Syndic...\r"
   ( 
     echo -ne "grains:\n  is_syndic: True" > /etc/salt/minion.d/grains.conf;
-    echo "syndic_master: "
+    echo "syndic_master: " > /etc/salt/master.d/syndic.conf
     for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
       echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/master.d/syndic.conf
     }
