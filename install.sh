@@ -138,6 +138,7 @@ case $1 in
     01_configure_salt_repository
     02_install_packages
     05_configure_salt_minion
+    ;;
   *)
     04_help
     ;;
