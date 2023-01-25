@@ -60,6 +60,8 @@ check_retcode() {
   (
     set -e
     yum remove -y -q salt-* >> ${LOG_FILE} 2>> ${LOG_FILE}
+    systemctl enable salt-master
+    systemctl start  salt-master
   )
   check_retcode $? " - removing Salt packages..."
 
@@ -86,7 +88,8 @@ check_retcode() {
       for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
         echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/minion.d/master.conf
       }
-      systemctl restart salt-minion 
+      systemctl enable salt-minion 
+      systemctl start salt-minion 
     )
     
     check_retcode $? " - configuring Salt Minion..."
@@ -102,6 +105,8 @@ check_retcode() {
     for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
       echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/master.d/syndic.conf
     }
+    systemc enable salt-master salt-syndic salt-minion;
+    systemc start salt-master salt-syndic salt-minion
   )
   check_retcode $? " - configuring Salt Syndic..."
 
