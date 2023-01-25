@@ -93,6 +93,25 @@ check_retcode() {
 
 }
 
+06_configure_syndic_grain() {
+
+  echo -ne " - configuring Salt Syndic...\r"
+    (
+      set -e ; 
+      echo "startup_states: 'highstate'" > /etc/salt/minion.d/startup_states.conf
+      echo $(hostname) > /etc/salt/minion_id
+      echo "master:" > /etc/salt/minion.d/master.conf
+      for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
+        echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/minion.d/master.conf
+      }
+      systemctl restart salt-minion
+      echo "is_syndic: True" > /etc/salt/minion.d/grains.conf 
+    )
+    
+    check_retcode $? " - configuring Salt Syndic..."
+
+}
+
 case $1 in
   --minion)
     SALT_CONTEXT="salt-minion"
@@ -112,6 +131,13 @@ case $1 in
   --remove)
     03_remove_salt_packages
     ;;
+  --syndic)
+    SALT_CONTEXT="salt-minion"
+    INSTALL_PACKAGES="salt-minion"
+    00_check_os_support
+    01_configure_salt_repository
+    02_install_packages
+    05_configure_salt_minion
   *)
     04_help
     ;;
