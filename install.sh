@@ -105,8 +105,8 @@ check_retcode() {
     for((i=0 ; $i < ${#MASTERS[@]} ; i++)) {
       echo -ne "  - ${MASTERS[$i]}\n" >> /etc/salt/master.d/syndic.conf
     }
-    systemc enable salt-master salt-syndic salt-minion;
-    systemc start salt-master salt-syndic salt-minion
+    systemctl enable salt-master salt-syndic salt-minion;
+    systemctl start salt-master salt-syndic salt-minion
   )
   check_retcode $? " - configuring Salt Syndic..."
 
