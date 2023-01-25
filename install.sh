@@ -96,7 +96,7 @@ check_retcode() {
 06_configure_syndic_grain() {
 
   echo -ne " - configuring Salt Syndic...\r"
-  echo "is_syndic: True" > /etc/salt/minion.d/grains.conf   
+  echo -ne "grains:\n  is_syndic: True" > /etc/salt/minion.d/grains.conf   
   check_retcode $? " - configuring Salt Syndic..."
 
 }
