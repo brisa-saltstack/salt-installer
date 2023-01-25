@@ -4,7 +4,7 @@ SUPPORTED_OS="rhel|fedora|centos"
 FILE_NAME="$( realpath $0 | awk -F'/' '{print $NF}')"
 LOG_FILE="$( echo /tmp/${FILE_NAME} | sed 's/\.sh//g')-$(date +%d%m%Y%H%M%S)-error.log"
 SALT_VERSION="3004"
-MASTERS=("192.168.0.221" "192.168.0.222")
+MASTERS=("192.168.0.200")
 
 check_retcode() {
   
