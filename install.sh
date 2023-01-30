@@ -123,7 +123,7 @@ case $1 in
     ;;
   --master)
     SALT_CONTEXT="salt-master"
-    INSTALL_PACKAGES="salt-master salt-minion salt-ssh salt-syndic salt-cloud salt-api"
+    INSTALL_PACKAGES="salt-master salt-minion salt-ssh salt-syndic salt-cloud salt-api python3-inotify"
     00_check_os_support
     01_configure_salt_repository
     02_install_packages
@@ -133,7 +133,7 @@ case $1 in
     ;;
   --syndic)
     SALT_CONTEXT="salt-master"
-    INSTALL_PACKAGES="salt-master salt-minion salt-ssh salt-syndic salt-cloud salt-api"
+    INSTALL_PACKAGES="salt-master salt-minion salt-ssh salt-syndic salt-cloud salt-api python3-inotify"
     00_check_os_support
     01_configure_salt_repository
     02_install_packages
